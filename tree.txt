@@ -1,0 +1,30 @@
+#import 
+
+import pandas as pd 
+import numpy as np 
+
+#read dataset 
+dataset=pd.read_csv("data.csv")
+dataset
+x=dataset.iloc[:,:-1]	
+#convert in array 
+y=dataset.iloc[:,5].values
+#now the data is not in numeric format to convert it we have to use labelencoder 
+
+from sklearn.preprocessing import LabelEncoder
+x=x.apply(LabelEncoder().fit_transform)
+#now lets import the decision tree classifier 
+from sklearn.tree import DecisionTreeClassifier
+regressor=DecisionTreeClassifier()
+regressor.fit(x.iloc[:,1:5],y)
+x_in=np.array([1,1,0,0])
+y_pred=regressor.predict([x_in])
+print("Prediction:", y_pred)
+from six import StringIO
+from sklearn.tree import export_graphviz
+import pydotplus
+dot_file=StringIO()
+
+export_graphviz(regressor,out_file=dot_file,special_characters=True)
+graph=pydotplus.graph_from_dot_data(dot_file.getvalue())
+graph.write_png('tree.png')
